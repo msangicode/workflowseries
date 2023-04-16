@@ -2,7 +2,8 @@ table 52194423 "Custom Workflow Header"
 {
     Caption = 'Custom Workflow Header';
     DataClassification = ToBeClassified;
-
+    DrillDownPageId = "Custom Workflow list";
+    LookupPageId = "Custom Workflow list";
     fields
     {
         field(1; "No."; Code[10])

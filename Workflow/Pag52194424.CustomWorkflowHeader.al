@@ -48,10 +48,13 @@ page 52194424 "Custom Workflow Header"
                     PromotedCategory = Process;
                     trigger OnAction()
 
+                    var
+                        CustomWorkflowMgmt: Codeunit "Custom Workflow Mgmt";
+                        RecRef: RecordRef;
                     begin
-                        Message('Send Approval request');
-                        //   if ApprovalsMgmt.CheckApprovalsWorkflowEnabled(Rec) then
-                        //  ApprovalsMgmt.OnSendForApproval(Rec);
+                        RecRef.GetTable(Rec);
+                        if CustomWorkflowMgmt.CheckApprovalsWorkflowEnabled(RecRef) then
+                            CustomWorkflowMgmt.OnSendWorkflowForApproval(RecRef);
                     end;
                 }
                 action(CancelApprovalRequest)
@@ -62,14 +65,14 @@ page 52194424 "Custom Workflow Header"
                     Image = CancelApprovalRequest;
                     ToolTip = 'Cancel the approval request.';
                     Promoted = true;
-
                     PromotedCategory = Process;
-
                     trigger OnAction()
-
+                    var
+                        CustomWorkflowMgmt: Codeunit "Custom Workflow Mgmt";
+                        RecRef: RecordRef;
                     begin
-                        // ApprovalsMgmt.OnCancelApprovalRequest(Rec);
-                        Message('Cancel approval request;');
+                        RecRef.GetTable(Rec);
+                        CustomWorkflowMgmt.OnCancelWorkflowForApproval(RecRef);
                     end;
                 }
             }
@@ -147,6 +150,7 @@ page 52194424 "Custom Workflow Header"
                     ToolTip = 'View approval requests.';
                     Promoted = true;
                     PromotedCategory = New;
+                    Visible = HasApprovalEntries;
                     trigger OnAction()
                     begin
                         ApprovalsMgmt.OpenApprovalEntriesPage(Rec.RecordId);
@@ -161,9 +165,11 @@ page 52194424 "Custom Workflow Header"
         OpenApprovalEntriesExistCurrUser := ApprovalsMgmt.HasOpenApprovalEntriesForCurrentUser(Rec.RecordId);
         OpenApprovalEntriesExist := ApprovalsMgmt.HasOpenApprovalEntries(Rec.RecordId);
         CanCancelApprovalForRecord := ApprovalsMgmt.CanCancelApprovalForRecord(Rec.RecordId);
+        HasApprovalEntries := ApprovalsMgmt.HasApprovalEntries(Rec.RecordId);
     end;
 
     var
-        OpenApprovalEntriesExistCurrUser, OpenApprovalEntriesExist, CanCancelApprovalForRecord : Boolean;
+        OpenApprovalEntriesExistCurrUser, OpenApprovalEntriesExist, CanCancelApprovalForRecord
+        , HasApprovalEntries : Boolean;
         ApprovalsMgmt: Codeunit "Approvals Mgmt.";
 }
